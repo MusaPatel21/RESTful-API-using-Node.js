@@ -2,13 +2,10 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-// Middleware to parse JSON data
 app.use(express.json());
 
-// In-memory task data (an array to store tasks)
 let tasks = [];
 
-// Authentication middleware (for protection of POST, PUT, DELETE)
 function checkAuth(req, res, next) {
     const apiKey = req.header('x-api-key');
     if (apiKey !== 'your-secure-api-key') {
@@ -19,10 +16,10 @@ function checkAuth(req, res, next) {
 
 // 1. GET /tasks - Retrieve all tasks with pagination and sorting
 app.get('/tasks', (req, res) => {
-    const page = parseInt(req.query.page) || 1; // Default to page 1
-    const limit = parseInt(req.query.limit) || 5; // Default to limit of 5 tasks per page
-    const sortBy = req.query.sortBy || 'title'; // Default to sorting by title
-    const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1; // Default to ascending order
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) || 5; 
+    const sortBy = req.query.sortBy || 'title'; 
+    const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1; 
 
     // Sort tasks
     const sortedTasks = [...tasks].sort((a, b) => {
@@ -50,11 +47,10 @@ app.get('/tasks/:id', (req, res) => {
     res.status(200).json(task);
 });
 
-// 3. POST /tasks - Create a new task (requires authentication)
+// 3. POST /tasks - Create a new task 
 app.post('/tasks', checkAuth, (req, res) => {
     const { title, description } = req.body;
 
-    // Basic validation: Title and description are required
     if (!title || !description) return res.status(400).send('Title and description are required');
 
     const newTask = {
@@ -67,7 +63,7 @@ app.post('/tasks', checkAuth, (req, res) => {
     res.status(201).json(newTask);
 });
 
-// 4. PUT /tasks/:id - Update a task by ID (requires authentication)
+// 4. PUT /tasks/:id - Update a task by ID 
 app.put('/tasks/:id', checkAuth, (req, res) => {
     const { title, description } = req.body;
     const task = tasks.find(t => t.id === parseInt(req.params.id));
@@ -80,7 +76,7 @@ app.put('/tasks/:id', checkAuth, (req, res) => {
     res.status(200).json(task);
 });
 
-// 5. DELETE /tasks/:id - Delete a task by ID (requires authentication)
+// 5. DELETE /tasks/:id - Delete a task by ID 
 app.delete('/tasks/:id', checkAuth, (req, res) => {
     const taskIndex = tasks.findIndex(t => t.id === parseInt(req.params.id));
     if (taskIndex === -1) return res.status(404).send('Task not found');
